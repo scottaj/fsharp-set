@@ -7,27 +7,26 @@ No specific interface was given for implementing the set, so I am assuming that 
 ## Interface
 
 ### Basic operations
- * `Put(val)`: add an item to the set
- * `Empty()`: Return true if the set is empty, false otherwise
- * `Present(val)`: Returns true if the value is present in the set, false otherwise
- * `Remove(val, default)`: Return the passed value from the set, if it was present return it, otherwise return default
- * `Count`: Return the number of items in the set
+ * `#Put(val)`: add an item to the set
+ * `#Empty()`: Return true if the set is empty, false otherwise
+ * `#Present(val)`: Returns true if the value is present in the set, false otherwise
+ * `#Remove(val, default)`: Return the passed value from the set, if it was present return it, otherwise return default
+ * `#Count()`: Return the number of items in the set
 
 ### Operations with other sets
- * `Union(otherSet)`: Return a new set that is the union of this set and otherSet
- * `Intersection(otherSet)`: Return a new set this is the intersection of this set and otherSet
- * `Difference(otherSet)`: Return a new set this is the difference of this set and otherSet
- * `Equals(otherSet)`: Return true if the set is equal to otherSet
- * `Subset(otherSet)`: Return true if the set is a subset of otherSet
- * `StrictSubset(otherSet)`: Return true if the set is a strict subset of otherSet
- * `Superset(otherSet)`: Return true if the set is a superset of otherSet
- * `StrictSuperset(otherSet)`: Return true if the set is a strict superset of otherSet
+ * `Union(sets...)`: Return a new set that is the union of this set and otherSet
+ * `Intersection(sets...)`: Return a new set this is the intersection of this set and otherSet
+ * `#Difference(otherSets...)`: Return a new set this is the difference of this set and otherSet
+ * `#Subset(otherSet)`: Return true if the set is a subset of otherSet
+ * `#StrictSubset(otherSet)`: Return true if the set is a strict subset of otherSet
+ * `#Superset(otherSet)`: Return true if the set is a superset of otherSet
+ * `#StrictSuperset(otherSet)`: Return true if the set is a strict superset of otherSet
  
 ### Iteration
 
 I feel like the above operations are the most interesting. If time permits I would like to implement a standard iteration interface for my set. Since this is usually platform dependent and I'm not sure of the details for .NET, I'm not as worried about this part.
 
-#### Update
+#### Update on iteration
 I ended up going down this road, and boy was it a doozy. First oof, I had to get my search terms right. Searching for `F# looping` and `f# custom type iteration` just got me basic loop stuff. Eventually, The compiler gave me enough clues to figure out I needed to search for `F# implement IEnumerable`. 
 
 My first problem was that since I am using a map type to back my set, it exposes map enumerators with two values, even if you get the enumerator for just the keys or values. This is more specific than the generic `IEnumerable` enumerator the interface wanted so it would not compile. After some more digging I figured out that if I could convert my key set into a sequence, I could get the enumerator I wanted. [This StackOverflow question](http://stackoverflow.com/questions/1117302/how-to-convert-a-dictionary-into-a-sequence-in-f) pointed me in the right direction there.
@@ -50,6 +49,11 @@ There are two reasonable ways to implement a set: hash tables, or a sorted seque
 My initial plan is to use the prebuilt Dictionary data structure that the .NET framework comes with to back my set implementation and provide the above described interface. If time permits I may also look into implementing the backing data structure, although if I did that I would probably do the BST approach instead of making my own hash table.
 
 One additional implementation detail is that these sets are homogeneous, all of the members must be of the same type which is defined at instantiation time.
+
+#### Update on implementation
+I ended up with what I feel is a pretty solid Set implementation. I've put several hours into and implemented the whole interface I had hoped to. I did not end up replacing the backing hash table with a custom implemented data structure. That might be fun to do in the future, but is a little ambitious for this weekend.
+
+I'm overall very happy with the design. The one thing I have doubts about is my decision to make `Union` and `Intersection` static methods. I was trying to effectively communicate that these methods are commutative by making them static, but it leaves them inconsistent with the rest of the interface. 
 
 ## Building and running
 To start with, you need to install make, mono, and nuget. On a mac, make is preinstalled and you can get the others with homebrew: `brew install mono nuget`.
