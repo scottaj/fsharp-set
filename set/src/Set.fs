@@ -6,12 +6,6 @@ module Set =
   type CustomSet<'a when 'a : equality>() =
     let hashtable = new Dictionary<'a, 'a>()
 
-    member this.Count =
-      hashtable.Count
-
-    member this.Empty =
-      this.Count.Equals(0)
-
     member this.Put(item) =
       if not(hashtable.ContainsKey(item)) then
         hashtable.Add(item, item)
@@ -22,3 +16,9 @@ module Set =
         item
       else
         orElse
+
+    member this.Count =
+      hashtable.Count
+
+    member this.Empty =
+      this.Count.Equals(0)

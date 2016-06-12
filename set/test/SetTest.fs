@@ -16,6 +16,20 @@ type ``#Put`` ()=
     testSet.Count |> should equal 1
 
 [<TestFixture>]
+type ``#Remove`` ()=
+  let testSet = new CustomSet<int>()
+
+  [<Test>]
+  member x.``returns the removed item if it was present`` ()=
+    testSet.Put(7)
+    testSet.Remove(7, -1) |> should equal 7
+
+  [<Test>]
+  member x.``returns the default if the item to remove is not present`` ()=
+    testSet.Put(7)
+    testSet.Remove(3, -1) |> should equal -1
+
+[<TestFixture>]
 type ``#Empty`` ()=
   let testSet = new CustomSet<string>()
 
@@ -29,17 +43,3 @@ type ``#Empty`` ()=
     testSet.Empty |> should be False
     ignore(testSet.Remove("Hello", ""))
     testSet.Empty |> should be True
-
-[<TestFixture>]
-type ``#Remove`` ()=
-  let testSet = new CustomSet<int>()
-
-  [<Test>]
-  member x.``returns the removed item if it was present`` ()=
-    testSet.Put(7)
-    testSet.Remove(7, -1) |> should equal 7
-
-  [<Test>]
-  member x.``returns the default if the item to remove is not present`` ()=
-    testSet.Put(7)
-    testSet.Remove(3, -1) |> should equal -1
