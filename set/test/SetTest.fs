@@ -305,3 +305,47 @@ type ``#StrictSubset`` ()=
   member test.``returns false for disjoint sets`` ()=
     set1.StrictSubset(set4) |> should be False
     set4.StrictSubset(set1) |> should be False
+
+[<TestFixture>]
+type ``#Superset`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3)
+  let set2 = CustomSet.SetOf(2, 3, 1)
+  let set3 = CustomSet.SetOf(1, 2, 3, 4)
+  let set4 = CustomSet.SetOf(5, 6, 7)
+
+  [<Test>]
+  member test.``returns true for equal sets`` ()=
+    set1.Superset(set2) |> should be True
+    set2.Superset(set1) |> should be True
+
+  [<Test>]
+  member test.``returns true if the right hand set only contains members also in the left hand set`` ()=
+    set1.Superset(set3) |> should be False
+    set3.Superset(set1) |> should be True
+
+  [<Test>]
+  member test.``returns false for disjoint sets`` ()=
+    set1.Superset(set4) |> should be False
+    set4.Superset(set1) |> should be False
+
+[<TestFixture>]
+type ``#StrictSuperset`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3)
+  let set2 = CustomSet.SetOf(2, 3, 1)
+  let set3 = CustomSet.SetOf(1, 2, 3, 4)
+  let set4 = CustomSet.SetOf(5, 6, 7)
+
+  [<Test>]
+  member test.``returns false for equal sets`` ()=
+    set1.StrictSuperset(set2) |> should be False
+    set2.StrictSuperset(set1) |> should be False
+
+  [<Test>]
+  member test.``returns true if the right hand set only contains members also in the left hand set`` ()=
+    set1.StrictSuperset(set3) |> should be False
+    set3.StrictSuperset(set1) |> should be True
+
+  [<Test>]
+  member test.``returns false for disjoint sets`` ()=
+    set1.StrictSuperset(set4) |> should be False
+    set4.StrictSuperset(set1) |> should be False
