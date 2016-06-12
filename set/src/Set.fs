@@ -4,8 +4,12 @@ open System
 open System.Collections.Generic
 
 module Set =
-  type CustomSet<'a when 'a : equality>() =
+  type CustomSet<'a when 'a : equality> ()=
     let hashtable = new Dictionary<'a, 'a>()
+
+    static member EmptySet =
+      let emptySet = new CustomSet<'a>()
+      emptySet
 
     static member SetOf([<ParamArray>] setMembers : 'a[]) =
       let set = new CustomSet<'a>()
@@ -13,6 +17,15 @@ module Set =
         set.Put(setMember)
 
       set
+
+    static member Union([<ParamArray>] sets : CustomSet<'a>[]) =
+      let unionSet = new CustomSet<'a>()
+
+      for set in sets do
+        for setMember in set do
+          unionSet.Put(setMember)
+
+      unionSet
 
     member this.Put(item) =
       if not(this.Present(item)) then
@@ -33,3 +46,13 @@ module Set =
 
     member this.Empty =
       this.Count.Equals(0)
+
+    interface IEnumerable<'a> with
+      member this.GetEnumerator() =
+        let keySeq = hashtable |> Seq.map (fun (KeyValue(k,v)) -> k)
+        keySeq.GetEnumerator()
+
+    interface System.Collections.IEnumerable with
+      member this.GetEnumerator() =
+        let keySeq = hashtable |> Seq.map (fun (KeyValue(k,v)) -> k)
+        keySeq.GetEnumerator() :> System.Collections.IEnumerator

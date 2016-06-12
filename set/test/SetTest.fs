@@ -21,7 +21,7 @@ type ``SetOf`` ()=
 
 [<TestFixture>]
 type ``#Put`` ()=
-  let testSet = new CustomSet<int>()
+  let testSet = CustomSet.EmptySet
 
   [<Test>]
   member x.``does not cause error when putting the same key twice`` ()=
@@ -64,7 +64,7 @@ type ``#Present`` ()=
 
 [<TestFixture>]
 type ``#Count`` ()=
-  let testSet = new CustomSet<int>()
+  let testSet = CustomSet.EmptySet
 
   [<Test>]
   member x.``returns the number of items in the set`` ()=
@@ -80,7 +80,7 @@ type ``#Count`` ()=
 
 [<TestFixture>]
 type ``#Empty`` ()=
-  let testSet = new CustomSet<string>()
+  let testSet = CustomSet.EmptySet
 
   [<Test>]
   member x.``is true when first created`` ()=
@@ -92,3 +92,48 @@ type ``#Empty`` ()=
     testSet.Empty |> should be False
     ignore(testSet.Remove("Hello", ""))
     testSet.Empty |> should be True
+
+
+[<TestFixture>]
+type ``#Union`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3)
+  let set2 = CustomSet.SetOf(3, 4, 5)
+  let set3 = CustomSet.SetOf(5, 6, 7)
+
+  [<Test>]
+  member x.``returns a new set with all the items from all the sets`` ()=
+    let unionSet = CustomSet.Union(set1, set2, set3)
+    unionSet.Count |> should equal 7
+    unionSet.Present(1) |> should be True
+    unionSet.Present(2) |> should be True
+    unionSet.Present(3) |> should be True
+    unionSet.Present(4) |> should be True
+    unionSet.Present(5) |> should be True
+    unionSet.Present(6) |> should be True
+    unionSet.Present(7) |> should be True
+
+  [<Test>]
+  member x.``returns an identical set when you union a set with itself`` ()=
+    let unionSet = CustomSet.Union(set1, set1)
+    unionSet.Count |> should equal 3
+    unionSet.Present(1) |> should be True
+    unionSet.Present(2) |> should be True
+    unionSet.Present(3) |> should be True
+
+  [<Test>]
+  member x.``returns an identical set when you union with an empty set`` ()=
+    let unionSet = CustomSet.Union(set1, CustomSet.EmptySet)
+    unionSet.Count |> should equal 3
+    unionSet.Present(1) |> should be True
+    unionSet.Present(2) |> should be True
+    unionSet.Present(3) |> should be True
+    let unionSet2 = CustomSet.Union(CustomSet.EmptySet, set1)
+    unionSet2.Count |> should equal 3
+    unionSet2.Present(1) |> should be True
+    unionSet2.Present(2) |> should be True
+    unionSet2.Present(3) |> should be True
+
+  [<Test>]
+  member x.``returns an empty set when you union two empty sets`` ()=
+    let unionSet = CustomSet.Union(CustomSet.EmptySet, CustomSet.EmptySet)
+    unionSet.Empty |> should be True

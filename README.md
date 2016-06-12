@@ -14,9 +14,9 @@ No specific interface was given for implementing the set, so I am assuming that 
  * `Count`: Return the number of items in the set
 
 ### Operations with other sets
- * `Union(otherSet)`: Return the union of this set and otherSet
- * `Intersection(otherSet)`: Return the intersection of this set and otherSet
- * `Difference(otherSet)`: Return the difference of this set and otherSet
+ * `Union(otherSet)`: Return a new set that is the union of this set and otherSet
+ * `Intersection(otherSet)`: Return a new set this is the intersection of this set and otherSet
+ * `Difference(otherSet)`: Return a new set this is the difference of this set and otherSet
  * `Equals(otherSet)`: Return true if the set is equal to otherSet
  * `Subset(otherSet)`: Return true if the set is a subset of otherSet
  * `StrictSubset(otherSet)`: Return true if the set is a strict subset of otherSet
@@ -26,6 +26,15 @@ No specific interface was given for implementing the set, so I am assuming that 
 ### Iteration
 
 I feel like the above operations are the most interesting. If time permits I would like to implement a standard iteration interface for my set. Since this is usually platform dependent and I'm not sure of the details for .NET, I'm not as worried about this part.
+
+#### Update
+I ended up going down this road, and boy was it a doozy. First oof, I had to get my search terms right. Searching for `F# looping` and `f# custom type iteration` just got me basic loop stuff. Eventually, The compiler gave me enough clues to figure out I needed to search for `F# implement IEnumerable`. 
+
+My first problem was that since I am using a map type to back my set, it exposes map enumerators with two values, even if you get the enumerator for just the keys or values. This is more specific than the generic `IEnumerable` enumerator the interface wanted so it would not compile. After some more digging I figured out that if I could convert my key set into a sequence, I could get the enumerator I wanted. [This StackOverflow question](http://stackoverflow.com/questions/1117302/how-to-convert-a-dictionary-into-a-sequence-in-f) pointed me in the right direction there.
+
+This got me far enough to implement the `IEnumerable<'a>` interface for my set's generic type. However it still gave me a compiler error about not implementing the interface. After some more googling I found some a straight forward example [here](https://viralfsharp.com/2012/02/11/implementing-a-stack-in-f/) but could not get my equivilent of it to work. I kept getting various compiler errors telling me I was implementing the IEnumerable interface wrong because it wanted one type param. This had me stalled for a while, until I found [this stack overflow question](http://stackoverflow.com/questions/30128320/custom-ienumerator-in-f) about the related `IEnumerator` interface. Reading the code example finally made me realize that `IEnumerator<T>` and the generic `IEnumerator` were in different packages, which is why it was complaining about me instantiating the generic version (because I had imported the typed version)
+
+Once I figured that out, I was able to get iteration working pretty quickly with my set type.
 
 ## Technical
 
