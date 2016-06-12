@@ -218,3 +218,28 @@ type ``#Difference`` ()=
   member test.``the difference of the empty set with any other set is the empty set`` ()=
     let differenceSet = CustomSet.EmptySet.Difference(set1)
     differenceSet.Empty |> should be True
+
+[<TestFixture>]
+type ``#Equality`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3)
+  let set2 = CustomSet.SetOf(2, 3, 1)
+  let set3 = CustomSet.SetOf(1, 2, 3, 4)
+  let set4 = CustomSet.SetOf(5, 6, 7)
+
+  [<Test>]
+  member test.``returns true when you compare the same set`` ()=
+    set1 = set1 |> should be True
+
+  [<Test>]
+  member test.``returns true for two different sets with the same members`` ()=
+    set1 = set2 |> should be True
+    set2 = set1 |> should be True
+
+  [<Test>]
+  member test.``returns false for a set that is missing a member from the other set`` ()=
+    set1 = set3 |> should be False
+    set3 = set1 |> should be False
+
+  [<Test>]
+  member test.``returns false for a disjoint set`` ()=
+    set1 = set4 |> should be False

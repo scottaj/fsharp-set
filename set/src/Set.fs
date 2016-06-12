@@ -70,6 +70,11 @@ module Set =
 
       differenceSet
 
+    override this.Equals(other) =
+      let otherSet = other :?> CustomSet<'a>
+      let unionCount = CustomSet.Union(this, otherSet).Count
+      this.Count = otherSet.Count && this.Count = unionCount
+
     interface IEnumerable<'a> with
       member this.GetEnumerator() =
         let keySeq = hashtable |> Seq.map (fun (KeyValue(k,v)) -> k)
