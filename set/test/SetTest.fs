@@ -10,12 +10,12 @@ type ``SetOf`` ()=
   let testSet = CustomSet.SetOf("a", "b", "c")
 
   [<Test>]
-  member x.``creates a new CustomSet with the provided arguments as members`` ()=
+  member test.``creates a new CustomSet with the provided arguments as members`` ()=
     testSet.Count |> should equal 3
     testSet.Remove("b", "") |> should equal "b"
 
   [<Test>]
-  member x.``handles duplicates gracefully`` ()=
+  member test.``handles duplicates gracefully`` ()=
     let willNotHaveDuplicates = CustomSet.SetOf(1, 1, 2, 3, 2, 3)
     willNotHaveDuplicates.Count |> should equal 3
 
@@ -24,7 +24,7 @@ type ``#Put`` ()=
   let testSet = CustomSet.EmptySet
 
   [<Test>]
-  member x.``does not cause error when putting the same key twice`` ()=
+  member test.``does not cause error when putting the same key twice`` ()=
     testSet.Put(5)
     testSet.Put(5)
     testSet.Count |> should equal 1
@@ -34,12 +34,12 @@ type ``#Remove`` ()=
   let testSet = CustomSet.SetOf(7)
 
   [<Test>]
-  member x.``returns the removed item if it was present`` ()=
+  member test.``returns the removed item if it was present`` ()=
     testSet.Put(7)
     testSet.Remove(7, -1) |> should equal 7
 
   [<Test>]
-  member x.``returns the default if the item to remove is not present`` ()=
+  member test.``returns the default if the item to remove is not present`` ()=
     testSet.Put(7)
     testSet.Remove(3, -1) |> should equal -1
 
@@ -48,15 +48,15 @@ type ``#Present`` ()=
   let testSet = CustomSet.SetOf(5)
 
   [<Test>]
-  member x.``returns true of the item is present`` ()=
+  member test.``returns true of the item is present`` ()=
     testSet.Present(5) |> should be True
 
   [<Test>]
-  member x.``returns false if the item is absent`` ()=
+  member test.``returns false if the item is absent`` ()=
     testSet.Present(10) |> should be False
 
   [<Test>]
-  member x.``updates as items are added and removed`` ()=
+  member test.``updates as items are added and removed`` ()=
     testSet.Put(3)
     testSet.Present(3) |> should be True
     ignore(testSet.Remove(3, 0))
@@ -67,7 +67,7 @@ type ``#Count`` ()=
   let testSet = CustomSet.EmptySet
 
   [<Test>]
-  member x.``returns the number of items in the set`` ()=
+  member test.``returns the number of items in the set`` ()=
     testSet.Count |> should equal 0
     testSet.Put(5)
     testSet.Count |> should equal 1
@@ -83,11 +83,11 @@ type ``#Empty`` ()=
   let testSet = CustomSet.EmptySet
 
   [<Test>]
-  member x.``is true when first created`` ()=
+  member test.``is true when first created`` ()=
     testSet.Empty |> should be True
 
   [<Test>]
-  member x.``changes status as items are added and removed`` ()=
+  member test.``changes status as items are added and removed`` ()=
     testSet.Put("Hello")
     testSet.Empty |> should be False
     ignore(testSet.Remove("Hello", ""))
@@ -95,13 +95,13 @@ type ``#Empty`` ()=
 
 
 [<TestFixture>]
-type ``#Union`` ()=
+type ``Union`` ()=
   let set1 = CustomSet.SetOf(1, 2, 3)
   let set2 = CustomSet.SetOf(3, 4, 5)
   let set3 = CustomSet.SetOf(5, 6, 7)
 
   [<Test>]
-  member x.``returns a new set with all the items from all the sets`` ()=
+  member test.``returns a new set with all the items from all the sets`` ()=
     let unionSet = CustomSet.Union(set1, set2, set3)
     unionSet.Count |> should equal 7
     unionSet.Present(1) |> should be True
@@ -113,7 +113,7 @@ type ``#Union`` ()=
     unionSet.Present(7) |> should be True
 
   [<Test>]
-  member x.``returns an identical set when you union a set with itself`` ()=
+  member test.``returns an identical set when you union a set with itself`` ()=
     let unionSet = CustomSet.Union(set1, set1)
     unionSet.Count |> should equal 3
     unionSet.Present(1) |> should be True
@@ -121,12 +121,13 @@ type ``#Union`` ()=
     unionSet.Present(3) |> should be True
 
   [<Test>]
-  member x.``returns an identical set when you union with an empty set`` ()=
+  member test.``returns an identical set when you union with an empty set`` ()=
     let unionSet = CustomSet.Union(set1, CustomSet.EmptySet)
     unionSet.Count |> should equal 3
     unionSet.Present(1) |> should be True
     unionSet.Present(2) |> should be True
     unionSet.Present(3) |> should be True
+
     let unionSet2 = CustomSet.Union(CustomSet.EmptySet, set1)
     unionSet2.Count |> should equal 3
     unionSet2.Present(1) |> should be True
@@ -134,6 +135,42 @@ type ``#Union`` ()=
     unionSet2.Present(3) |> should be True
 
   [<Test>]
-  member x.``returns an empty set when you union two empty sets`` ()=
+  member test.``returns an empty set when you union two empty sets`` ()=
     let unionSet = CustomSet.Union(CustomSet.EmptySet, CustomSet.EmptySet)
     unionSet.Empty |> should be True
+
+[<TestFixture>]
+type ``Intersection`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3, 4)
+  let set2 = CustomSet.SetOf(4, 5, 6, 7)
+  let set3 = CustomSet.SetOf(2, 4, 6, 8)
+
+  [<Test>]
+  member test.``returns a new set with the common items from all the provided sets`` ()=
+    let intersection = CustomSet.Intersection(set1, set3)
+    intersection.Count |> should equal 2
+    intersection.Present(2) |> should be True
+    intersection.Present(4) |> should be True
+
+    let intersection2 = CustomSet.Intersection(intersection, set2)
+    intersection2.Count |> should equal 1
+    intersection2.Present(4) |> should be True
+
+  [<Test>]
+  member test.``the intersection of a set with itself is the set`` ()=
+    let intersection = CustomSet.Intersection(set1, set1)
+    intersection.Count |> should equal 4
+    intersection.Present(1) |> should be True
+    intersection.Present(2) |> should be True
+    intersection.Present(3) |> should be True
+    intersection.Present(4) |> should be True
+
+  [<Test>]
+  member test.``this intersection of two disjoint sets is the empty set`` ()=
+    let intersection = CustomSet.Intersection(set1, CustomSet.SetOf(5, 6))
+    intersection.Empty |> should be True
+
+  [<Test>]
+  member test.``the intersection of any set and the empty set is the empty set`` ()=
+    let intersection = CustomSet.Intersection(set1, CustomSet.EmptySet)
+    intersection.Empty |> should be True

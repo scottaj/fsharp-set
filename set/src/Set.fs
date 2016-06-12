@@ -27,6 +27,18 @@ module Set =
 
       unionSet
 
+    static member Intersection([<ParamArray>] sets : CustomSet<'a>[]) =
+      let intersectionSet = new CustomSet<'a>()
+
+      let shortestSet = sets |> Array.minBy(fun s -> s.Count)
+
+      for setMember in shortestSet do
+        let memberInAllSets = sets |> Array.forall(fun s -> s.Present(setMember))
+        if memberInAllSets then
+          intersectionSet.Put(setMember)
+
+      intersectionSet
+
     member this.Put(item) =
       if not(this.Present(item)) then
         hashtable.Add(item, item)
