@@ -73,6 +73,9 @@ module Set =
     member this.Subset(otherSet : CustomSet<'a>) =
       this.Difference(otherSet).Empty
 
+    member this.StrictSubset(otherSet) =
+      this.Subset(otherSet) && this.Count < otherSet.Count
+
     override this.Equals(other) =
       let otherSet = other :?> CustomSet<'a>
       let unionCount = CustomSet.Union(this, otherSet).Count

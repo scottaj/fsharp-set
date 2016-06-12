@@ -284,3 +284,24 @@ type ``#Subset`` ()=
     set1.Subset(set4) |> should be False
     set4.Subset(set1) |> should be False
 
+[<TestFixture>]
+type ``#StrictSubset`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3)
+  let set2 = CustomSet.SetOf(2, 3, 1)
+  let set3 = CustomSet.SetOf(1, 2, 3, 4)
+  let set4 = CustomSet.SetOf(5, 6, 7)
+
+  [<Test>]
+  member test.``returns false for equal sets`` ()=
+    set1.StrictSubset(set2) |> should be False
+    set2.StrictSubset(set1) |> should be False
+
+  [<Test>]
+  member test.``returns true if the left hand set only contains members also in the right hand set`` ()=
+    set1.StrictSubset(set3) |> should be True
+    set3.StrictSubset(set1) |> should be False
+
+  [<Test>]
+  member test.``returns false for disjoint sets`` ()=
+    set1.StrictSubset(set4) |> should be False
+    set4.StrictSubset(set1) |> should be False
