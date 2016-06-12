@@ -101,6 +101,12 @@ type ``Union`` ()=
   let set3 = CustomSet.SetOf(5, 6, 7)
 
   [<Test>]
+  member test.``does not mutate any of the arguments`` ()=
+    let unionSet = CustomSet.Union(set1, set2)
+    set1 = CustomSet.SetOf(1, 2, 3) |> should be True
+    set2 = CustomSet.SetOf(3, 4, 5) |> should be True
+
+  [<Test>]
   member test.``returns a new set with all the items from all the sets`` ()=
     let unionSet = CustomSet.Union(set1, set2, set3)
     unionSet.Count |> should equal 7
@@ -146,6 +152,12 @@ type ``Intersection`` ()=
   let set3 = CustomSet.SetOf(2, 4, 6, 8)
 
   [<Test>]
+  member test.``does not mutate any of the arguments`` ()=
+    let intersectionSet = CustomSet.Intersection(set1, set2)
+    set1 = CustomSet.SetOf(1, 2, 3, 4) |> should be True
+    set2 = CustomSet.SetOf(4, 5, 6, 7) |> should be True
+
+  [<Test>]
   member test.``returns a new set with the common items from all the provided sets`` ()=
     let intersection = CustomSet.Intersection(set1, set3)
     intersection.Count |> should equal 2
@@ -180,6 +192,12 @@ type ``#Difference`` ()=
   let set1 = CustomSet.SetOf(1, 2, 3, 4)
   let set2 = CustomSet.SetOf(2, 4, 6, 8)
   let set3 = CustomSet.SetOf(5, 6, 7, 8)
+
+  [<Test>]
+  member test.``does not mutate any of the arguments`` ()=
+    let differenceSet = set1.Difference(set2)
+    set1 = CustomSet.SetOf(1, 2, 3, 4) |> should be True
+    set2 = CustomSet.SetOf(2, 4, 6, 8) |> should be True
 
   [<Test>]
   member test.``returns the items in the set that are not in the other set`` ()=
