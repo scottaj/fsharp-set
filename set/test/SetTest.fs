@@ -174,3 +174,47 @@ type ``Intersection`` ()=
   member test.``the intersection of any set and the empty set is the empty set`` ()=
     let intersection = CustomSet.Intersection(set1, CustomSet.EmptySet)
     intersection.Empty |> should be True
+
+[<TestFixture>]
+type ``#Difference`` ()=
+  let set1 = CustomSet.SetOf(1, 2, 3, 4)
+  let set2 = CustomSet.SetOf(2, 4, 6, 8)
+  let set3 = CustomSet.SetOf(5, 6, 7, 8)
+
+  [<Test>]
+  member test.``returns the items in the set that are not in the other set`` ()=
+    let differenceSet = set1.Difference(set2)
+    differenceSet.Count |> should equal 2
+    differenceSet.Present(1) |> should be True
+    differenceSet.Present(3) |> should be True
+
+  [<Test>]
+  member test.``is not communative`` ()=
+    let differenceSet = set1.Difference(set2, set3)
+    differenceSet.Count |> should equal 2
+    differenceSet.Present(1) |> should be True
+    differenceSet.Present(3) |> should be True
+
+    let differenceSet = set3.Difference(set2, set1)
+    differenceSet.Count |> should equal 2
+    differenceSet.Present(5) |> should be True
+    differenceSet.Present(7) |> should be True
+
+  [<Test>]
+  member test.``the difference of any set and itself is the empty set`` ()=
+    let differenceSet = set1.Difference(set1)
+    differenceSet.Empty |> should be True
+
+  [<Test>]
+  member test.``the difference of any set and the empty set is the starting set`` ()=
+    let differenceSet = set1.Difference(CustomSet.EmptySet)
+    differenceSet.Count |> should equal 4
+    differenceSet.Present(1) |> should be True
+    differenceSet.Present(2) |> should be True
+    differenceSet.Present(3) |> should be True
+    differenceSet.Present(4) |> should be True
+
+  [<Test>]
+  member test.``the difference of the empty set with any other set is the empty set`` ()=
+    let differenceSet = CustomSet.EmptySet.Difference(set1)
+    differenceSet.Empty |> should be True

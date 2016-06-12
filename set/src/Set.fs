@@ -59,6 +59,17 @@ module Set =
     member this.Empty =
       this.Count.Equals(0)
 
+    member this.Difference([<ParamArray>] sets : CustomSet<'a>[]) =
+      let differenceSet = CustomSet.EmptySet
+
+      for setMember in this do
+        let memberInAnyOtherSet = sets |> Array.exists(fun s -> s.Present(setMember))
+
+        if not memberInAnyOtherSet then
+          differenceSet.Put(setMember)
+
+      differenceSet
+
     interface IEnumerable<'a> with
       member this.GetEnumerator() =
         let keySeq = hashtable |> Seq.map (fun (KeyValue(k,v)) -> k)
