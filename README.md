@@ -11,6 +11,7 @@ No specific interface was given for implementing the set, so I am assuming that 
  * `Empty()`: Return true if the set is empty, false otherwise
  * `Present(val)`: Returns true if the value is present in the set, false otherwise
  * `Remove(val, default)`: Return the passed value from the set, if it was present return it, otherwise return default
+ * `Count`: Return the number of items in the set
 
 ### Operations with other sets
  * `Union(otherSet)`: Return the union of this set and otherSet
@@ -38,6 +39,8 @@ I'm using the mono platform to build and run my code. I have a build script set 
 There are two reasonable ways to implement a set: hash tables, or a sorted sequence (probably a binary search tree, though an array could work too). Hash tables have better performance characteristics (constant time insertion and lookup) and can make creating heterogeneous sets easier. A BST or array can let you sort the set though which may be desirable if you're going to iterate over it. This comes at the cost of logarithmic access and insertion instead of constant time.
 
 My initial plan is to use the prebuilt Dictionary data structure that the .NET framework comes with to back my set implementation and provide the above described interface. If time permits I may also look into implementing the backing data structure, although if I did that I would probably do the BST approach instead of making my own hash table.
+
+One additional implementation detail is that these sets are homogeneous, all of the members must be of the same type which is defined at instantiation time.
 
 ## Building and running
 To start with, you need to install make, mono, and nuget. On a mac, make is preinstalled and you can get the others with homebrew: `brew install mono nuget`.

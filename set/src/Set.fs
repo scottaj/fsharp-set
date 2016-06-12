@@ -6,12 +6,19 @@ module Set =
   type CustomSet<'a when 'a : equality>() =
     let hashtable = new Dictionary<'a, 'a>()
 
+    member this.Count =
+      hashtable.Count
+
     member this.Empty =
-      hashtable.Count.Equals(0)
+      this.Count.Equals(0)
 
     member this.Put(item) =
-      hashtable.Add(item, item)
+      if not(hashtable.ContainsKey(item)) then
+        hashtable.Add(item, item)
 
-    member this.Remove(item) =
-      ignore(hashtable.Remove(item))
-      item
+    member this.Remove(item, orElse) =
+      if hashtable.ContainsKey(item) then
+        ignore(hashtable.Remove(item))
+        item
+      else
+        orElse
