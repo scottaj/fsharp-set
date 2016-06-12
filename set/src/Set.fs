@@ -15,15 +15,18 @@ module Set =
       set
 
     member this.Put(item) =
-      if not(hashtable.ContainsKey(item)) then
+      if not(this.Present(item)) then
         hashtable.Add(item, item)
 
     member this.Remove(item, orElse) =
-      if hashtable.ContainsKey(item) then
+      if this.Present(item) then
         ignore(hashtable.Remove(item))
         item
       else
         orElse
+
+    member this.Present(item) =
+      hashtable.ContainsKey(item)
 
     member this.Count =
       hashtable.Count

@@ -44,6 +44,25 @@ type ``#Remove`` ()=
     testSet.Remove(3, -1) |> should equal -1
 
 [<TestFixture>]
+type ``#Present`` ()=
+  let testSet = CustomSet.SetOf(5)
+
+  [<Test>]
+  member x.``returns true of the item is present`` ()=
+    testSet.Present(5) |> should be True
+
+  [<Test>]
+  member x.``returns false if the item is absent`` ()=
+    testSet.Present(10) |> should be False
+
+  [<Test>]
+  member x.``updates as items are added and removed`` ()=
+    testSet.Put(3)
+    testSet.Present(3) |> should be True
+    ignore(testSet.Remove(3, 0))
+    testSet.Present(3) |> should be False
+
+[<TestFixture>]
 type ``#Count`` ()=
   let testSet = new CustomSet<int>()
 
