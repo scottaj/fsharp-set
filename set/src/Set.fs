@@ -1,10 +1,18 @@
 ﻿namespace set
 
+open System
 open System.Collections.Generic
 
 module Set =
   type CustomSet<'a when 'a : equality>() =
     let hashtable = new Dictionary<'a, 'a>()
+
+    static member SetOf([<ParamArray>] setMembers : 'a[]) =
+      let set = new CustomSet<'a>()
+      for setMember in setMembers do
+        set.Put(setMember)
+
+      set
 
     member this.Put(item) =
       if not(hashtable.ContainsKey(item)) then

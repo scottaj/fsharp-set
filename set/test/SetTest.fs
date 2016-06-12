@@ -6,6 +6,20 @@ open FsUnit
 open set.Set
 
 [<TestFixture>]
+type ``SetOf`` ()=
+  let testSet = CustomSet.SetOf("a", "b", "c")
+
+  [<Test>]
+  member x.``creates a new CustomSet with the provided arguments as members`` ()=
+    testSet.Count |> should equal 3
+    testSet.Remove("b", "") |> should equal "b"
+
+  [<Test>]
+  member x.``handles duplicates gracefully`` ()=
+    let willNotHaveDuplicates = CustomSet.SetOf(1, 1, 2, 3, 2, 3)
+    willNotHaveDuplicates.Count |> should equal 3
+
+[<TestFixture>]
 type ``#Put`` ()=
   let testSet = new CustomSet<int>()
 
@@ -17,7 +31,7 @@ type ``#Put`` ()=
 
 [<TestFixture>]
 type ``#Remove`` ()=
-  let testSet = new CustomSet<int>()
+  let testSet = CustomSet.SetOf(7)
 
   [<Test>]
   member x.``returns the removed item if it was present`` ()=
